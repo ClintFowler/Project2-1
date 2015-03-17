@@ -1,0 +1,14 @@
+body {
+    background-color: black;
+    color: red;
+}
+h1 {
+    color: red;
+    font-size: 20px;
+}
+table {
+    width: 100%;
+}
+th, td {
+    width: 33%;
+}
