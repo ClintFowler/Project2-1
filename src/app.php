@@ -1,15 +1,15 @@
 <?php
 
-// Load server specific configuration data.  Should
-// check an environment variable load the appropriate
-// server configuration file.
-//require 'Config'.DIRECTORY_SEPARATOR.'dev.php';
+require 'Config/bootstrap.php';
 
-// Load dependencies here, if needed now.
-require 'Common'.DIRECTORY_SEPARATOR.'Authentication'.DIRECTORY_SEPARATOR.'CommonAuthInterface.php';
-require 'Common'.DIRECTORY_SEPARATOR.'Authentication'.DIRECTORY_SEPARATOR.'FileBased.php';
-require 'Common'.DIRECTORY_SEPARATOR.'Authentication'.DIRECTORY_SEPARATOR.'InMemory.php';
-require 'Common'.DIRECTORY_SEPARATOR.'Authentication'.DIRECTORY_SEPARATOR.'PostObject.php';
+/**
+ * @var \Common\Http\SimpleRequest();
+ */
+$request = new \Common\Http\SimpleRequest($_SERVER);
 
-// Display the login form.
-require 'Views'.DIRECTORY_SEPARATOR.'login.php';
+/**
+ * @var \Common\Routers\SimpleRouter()
+ */
+$router = new \Common\Routers\SimpleRouter($config['app']['uri-mappings']);
+
+$router->handle($request);

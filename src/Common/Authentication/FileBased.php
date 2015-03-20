@@ -1,54 +1,55 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: Clinton
+ * Date: 3/17/2015
+ * Time: 6:38 PM
+ */
 
-    class FileBased implements CommonAuthInterface
+namespace Common\Authentication;
+
+
+class FileBased implements IAuthentication
+{
+    /**
+     * Function authenticate
+     *
+     * @param string $username
+     * @param string $password
+     * @return mixed
+     *
+     * @access public
+     */
+
+    protected $user = " ";
+    protected $userpass = " ";
+
+    public function authenticate($username, $password)
     {
-        protected $user;
-        protected $userpassword;
-        protected $status;
-
-        public function __construct(PostObject $pst)
+        $this->user = $username;
+        $this->userpass = $password;
+        $loginfile = fopen("../src/Common/Authentication/testLogin.txt","r") or die("File not Found");
+        while(!feof($loginfile))
         {
-            $this->user = $pst->getUsername();
-            $this->userpassword = $pst->getPassword();
-            $this->status = 0;
-        }
-
-        public function authenticate()
-        {
-            $loginfile = fopen("../src/Common/Authentication/testLogin.txt","r") or die("File not Found");
-            while(!feof($loginfile))
+            $test = explode(",",fgets($loginfile));
+            foreach($test as $check)
             {
-                $test = explode(",",fgets($loginfile));
-                foreach($test as $check)
-                {
-                    if (!strcmp($check, $this->getformattedcreds())) {
-                        fclose($loginfile);
-                        return true;
-                        break;
-                    }
+                if (!strcmp($check, $this->getformattedcreds())) {
+                    fclose($loginfile);
+                    echo 'Login Passed for '.$this->user;
+                    return;
                 }
             }
-            fclose($loginfile);
-            return false;
         }
+        fclose($loginfile);
+        echo 'Login Failed';
+        return;
 
-        public function getStatus()
-        {
-            return $this->status;
-        }
+    }
 
-        private function getformattedcreds()
-        {
-            return $this->user.':'.$this->userpassword;
-        }
-
-        public function getProfile()
-        {
-            /* TODO: Implement getProfile() method.
-            * Nothing to implement at this time for
-            * In File Profiles.
-            */
-        }
-
+    private function getformattedcreds()
+    {
+        return $this->user.':'.$this->userpass;
+    }
 
 }

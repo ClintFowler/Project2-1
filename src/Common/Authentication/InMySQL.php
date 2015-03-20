@@ -2,64 +2,49 @@
 /**
  * Created by PhpStorm.
  * User: Clinton
- * Date: 3/5/2015
- * Time: 5:37 PM
+ * Date: 3/17/2015
+ * Time: 6:43 PM
  */
 
-class InMySQL implements CommonAuthInterface
-{
-    protected $user;
-    protected $userpass;
-    protected $status;
-    protected $dbh;
+namespace Common\Authentication;
 
-    public function __construct(PostObject $pst)
+use PDO;
+
+class InMySQL implements IAuthentication
+{
+    /**
+     * Function authenticate
+     *
+     * @param string $username
+     * @param string $password
+     * @return mixed
+     *
+     * @access public
+     */
+    public function authenticate($username, $password)
     {
-        $this->user = $pst->getUsername();
-        $this->userpass = $pst->getPassword();
-        $this->status = 1;
+        $dbh='';
         try
         {
-            $this->dbh = new PDO("mysql:host=localhost:3306;dbname=Website",'root','');
+            $dbh = new PDO("mysql:host=localhost:3306;dbname=Website",'root','');
         }
         catch(PDOException $e)
         {
             echo $e->getMessage();
         }
-    }
-
-    public function authenticate()
-    {
-        $query = "select username, password from users";
-        $results = $this->dbh->query($query);
+        $query ="Select username, password from users";
+        $results = $dbh->query($query);
         while($row = $results->fetch(PDO::FETCH_ASSOC))
         {
-            if($row["username"]=== $this->user && $row["password"] === $this->userpass)
+            if($row["username"]=== $username && $row["password"] === $password)
             {
                 $results->closeCursor();
-                return true;
+                echo 'Login Successful for '.$username;
+                return;
             }
         }
         $results->closeCursor();
-        return false;
-    }
-
-    public function closeConnection()
-    {
-        $this->dbh = null;
-    }
-
-    public function getStatus()
-    {
-        return $this->status;
-    }
-
-    public function getProfile()
-    {
-        /* TODO: Implement getProfile() method.
-            * Nothing to implement at this time for
-            * In File Profiles.
-            */
+        echo 'Login Failed!';
     }
 
 }

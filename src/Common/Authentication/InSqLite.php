@@ -2,66 +2,50 @@
 /**
  * Created by PhpStorm.
  * User: Clinton
- * Date: 3/9/2015
- * Time: 5:48 PM
+ * Date: 3/17/2015
+ * Time: 6:44 PM
  */
 
-class InSqLite implements CommonAuthInterface
-{
-    protected $user;
-    protected $userpass;
-    protected $status;
-    protected $dbh;
+namespace Common\Authentication;
 
-    function __construct(PostObject $pst)
+use PDO;
+
+class InSqLite implements IAuthentication
+{
+    /**
+     * Function authenticate
+     *
+     * @param string $username
+     * @param string $password
+     * @return mixed
+     *
+     * @access public
+     */
+    public function authenticate($username, $password)
     {
-        $this->user = $pst->getUsername();
-        $this->userpass = $pst->getPassword();
-        $this->status = 1;
+        $dbh='';
         try
         {
-            $this->dbh = new PDO("sqlite:../src/Common/Authentication/sqliteDB");
+            $dbh = new PDO("sqlite:../src/Common/Authentication/sqliteDB");
         }
         catch(PDOException $e)
         {
             echo $e->getMessage();
         }
-    }
-
-    public function authenticate()
-    {
         $query ="Select username, password from users";
-        $results = $this->dbh->query($query);
+        $results = $dbh->query($query);
         while($row = $results->fetch(PDO::FETCH_ASSOC))
         {
-            if($row["username"]=== $this->user && $row["password"] === $this->userpass)
+            if($row["username"]=== $username && $row["password"] === $password)
             {
                 $results->closeCursor();
-                return true;
+                echo 'Login Successful for '.$username;
+                return;
             }
         }
         $results->closeCursor();
-        return false;
+        echo 'Login Failed!';
     }
-
-    public function closeConnection()
-    {
-        $this->dbh = null;
-    }
-
-        public function getStatus()
-    {
-        return $this->status;
-    }
-
-    public function getProfile()
-    {
-        /* TODO: Implement getProfile() method.
-            * Nothing to implement at this time for
-            * In File Profiles.
-            */
-    }
-
 
 
 }

@@ -1,37 +1,33 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: Clinton
+ * Date: 3/17/2015
+ * Time: 6:39 PM
+ */
 
-    class InMemory implements CommonAuthInterface
+namespace Common\Authentication;
+
+
+class InMemory implements IAuthentication
+{
+    /**
+     * Function authenticate
+     *
+     * @param string $username
+     * @param string $password
+     * @return mixed
+     *
+     * @access public
+     */
+    public function authenticate($username, $password)
     {
-        protected $user;
-        protected $userpassword;
-        protected $status;
-
-        public function __construct(PostObject $pst)
+        if($username === "Clint" && $password === "LetMeIn123")
         {
-            $this->user = $pst->getUsername();
-            $this->userpassword = $pst->getPassword();
-            $this->status = 1;
+            echo 'Login successful for '. $username;
+            return;
         }
-
-        public function authenticate()
-        {
-            if($this->user !== "Clint" || $this->userpassword !== "LetMeIn123")
-            {
-                return false;
-            }
-            return true;
-        }
-
-        public function getStatus()
-        {
-            return $this->status;
-        }
-
-        public function getProfile()
-        {
-            /* TODO: Implement getProfile() method.
-            * Nothing to implement at this time for
-            * In Memory Profiles.
-            */
-        }
+        echo 'Login Failed!';
     }
+
+}
